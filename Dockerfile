@@ -17,6 +17,7 @@ WORKDIR /app
 # reference your application source files, uncomment the line below to copy all the files
 # into this layer.
 # COPY . .
+COPY composer.json composer.lock ./
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a bind mounts to composer.json and composer.lock to avoid having to copy them
@@ -76,6 +77,9 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY --from=deps app/vendor/ /var/www/html/vendor
 # Copy the app files from the app directory.
 COPY ./src /var/www/html
+
+RUN composer install
+
 
 # Switch to a non-privileged user (defined in the base image) that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
